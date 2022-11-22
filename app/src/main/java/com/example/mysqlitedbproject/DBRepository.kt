@@ -27,7 +27,7 @@ class DBRepository(private val context: Context) {
         append(" TEXT, ")
         append(CREATED_AT)
         append(" TEXT ")
-        append("(")
+        append(")")
     }
     private var myDB:MyDB=MyDB(context)
     private var sqLiteDatabase:SQLiteDatabase= myDB.writableDatabase
