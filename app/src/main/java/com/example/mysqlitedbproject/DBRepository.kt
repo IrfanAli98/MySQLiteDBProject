@@ -13,12 +13,12 @@ class DBRepository(private val context: Context) {
     private val SR_NO: String = "SR_NO"
     private val TITLE: String= "Title"
     private val DESCRYP: String= "Description"
-    private val CREATED_AT: String= "CreatedAt/ModifiedAt"
+    private val CREATED_AT: String= "CreatedAt_ModifiedAt"
 
     private val CREATE_TABLE= buildString {
         append("CREATE TABLE ")
         append(TABLE_NAME)
-        append("(")
+        append(" (")
         append(SR_NO)
         append(" INTEGER PRIMARY KEY AUTOINCREMENT, ")
         append(TITLE)
@@ -26,9 +26,9 @@ class DBRepository(private val context: Context) {
         append(DESCRYP)
         append(" TEXT, ")
         append(CREATED_AT)
-        append(" TEXT ")
-        append(")")
+        append(" TEXT)")
     }
+
     private var myDB:MyDB=MyDB(context)
     private var sqLiteDatabase:SQLiteDatabase= myDB.writableDatabase
 
