@@ -6,4 +6,8 @@ class DBViewModel(private val repository:DBRepository):ViewModel() {
     fun saveRecord(title:String, descrip:String, time:String){
         repository.saveRecords(title, descrip, time)
     }
+
+    fun getNotesRecord():List<NotesData>{
+        return repository.getRecords()
+    }
 }

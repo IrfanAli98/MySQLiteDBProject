@@ -3,6 +3,7 @@ package com.example.mysqlitedbproject
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
         dataBinding=DataBindingUtil.setContentView(this, R.layout.activity_main)
         factory = DBViewModelFactory(DBRepository(this))
         viewModel= ViewModelProvider(this, factory)[DBViewModel::class.java]
+        val list = viewModel.getNotesRecord()
+        Log.d("TAG", "onCreate: "+list  )
 
         dataBinding.ftBtnAdd.setOnClickListener {
             val dialog = Dialog(this)
@@ -42,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             btnSave.setOnClickListener {
                 if(etTitle.text.toString().isNotEmpty()&&etDescrip.text.toString().isNotEmpty()){
                 viewModel.saveRecord(etTitle.text.toString(), etDescrip.text.toString(), clkTime.text.toString())
+                    dialog.dismiss()
                 }
 
                 else Toast.makeText(this, "Enter the Title and Description", Toast.LENGTH_SHORT).show()
@@ -58,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
 
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){

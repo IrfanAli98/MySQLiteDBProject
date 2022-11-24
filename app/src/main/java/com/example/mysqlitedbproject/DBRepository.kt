@@ -2,6 +2,7 @@ package com.example.mysqlitedbproject
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.widget.Toast
@@ -46,6 +47,27 @@ class DBRepository(private val context: Context) {
         }else{
             Toast.makeText(context, "Successfully Saved", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    // TODO: to read the data from the list
+    fun getRecords():List<NotesData>{
+        var listOfNotes = ArrayList<NotesData>()
+        val columns = arrayOf(SR_NO, TITLE, DESCRYP, CREATED_AT)
+        val cursor:Cursor = sqLiteDatabase.query(TABLE_NAME, columns, null, null,null, null, null)
+        if(cursor.moveToFirst()){
+            do {
+                val id = cursor.getInt(0)
+                val Title = cursor.getString(1)
+                val Descrip = cursor.getString(2)
+                val CreatedAt= cursor.getString(3)
+                val Notes = NotesData(id, Title, Descrip, CreatedAt)
+                listOfNotes.add(Notes)
+            }while (cursor.moveToNext())
+
+        }else{
+            Toast.makeText(context, "No Data Found", Toast.LENGTH_SHORT).show()
+        }
+        return listOfNotes
     }
 
     inner class MyDB(context: Context):SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION ){
