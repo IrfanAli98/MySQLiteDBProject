@@ -1,29 +1,39 @@
 package com.example.mysqlitedbproject
 
 import android.app.Dialog
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mysqlitedbproject.`interface`.OnItemClickListener
 import com.example.mysqlitedbproject.databinding.ActivityMainBinding
+import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity() {
     private lateinit var dataBinding: ActivityMainBinding
     private lateinit var factory: DBViewModelFactory
     private lateinit var viewModel:DBViewModel
+    private lateinit var adapter: MyRecyclerViewAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         dataBinding=DataBindingUtil.setContentView(this, R.layout.activity_main)
         factory = DBViewModelFactory(DBRepository(this))
         viewModel= ViewModelProvider(this, factory)[DBViewModel::class.java]
-        val list = viewModel.getNotesRecord()
-        Log.d("TAG", "onCreate: "+list  )
+
+
+        val layoutManager= LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        dataBinding.rcwView.layoutManager = layoutManager
+        dataBinding.rcwView.setHasFixedSize(true)
+
+        updateUI()
 
         dataBinding.ftBtnAdd.setOnClickListener {
             val dialog = Dialog(this)
@@ -45,6 +55,7 @@ class MainActivity : AppCompatActivity() {
             btnSave.setOnClickListener {
                 if(etTitle.text.toString().isNotEmpty()&&etDescrip.text.toString().isNotEmpty()){
                 viewModel.saveRecord(etTitle.text.toString(), etDescrip.text.toString(), clkTime.text.toString())
+                    updateUI()
                     dialog.dismiss()
                 }
 
@@ -54,7 +65,6 @@ class MainActivity : AppCompatActivity() {
             btnClose.setOnClickListener { dialog.dismiss() }
             dialog.show()
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -67,10 +77,31 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.it_delete->{
-
+                viewModel.deleteAllRecord()
+                updateUI()
             }
 
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun getNotesList(): List<NotesData>{
+        return viewModel.getNotesRecord()
+    }
+    fun updateUI(){
+        adapter=MyRecyclerViewAdapter(getNotesList(), object : OnItemClickListener{
+            override fun onItemClick(notes: NotesData, position: Int) {
+                val intent = Intent(this@MainActivity, EditNotesPage::class.java)
+                intent.putExtra(Keys.NOTES, Gson().toJson(notes))
+                startActivity(intent)
+            }
+
+        })
+        dataBinding.rcwView.adapter=adapter
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        updateUI()
     }
 }

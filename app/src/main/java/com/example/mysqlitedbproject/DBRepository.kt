@@ -70,6 +70,41 @@ class DBRepository(private val context: Context) {
         return listOfNotes
     }
 
+    // TODO: for updating the records 
+    fun updateRecord(title:String, descrip: String, createdAt:String, srNo: Int){
+        val contentValues = ContentValues()
+        contentValues.put(TITLE, title)
+        contentValues.put(DESCRYP, descrip)
+        contentValues.put(CREATED_AT,createdAt)
+
+        val Id: Int = sqLiteDatabase.update(TABLE_NAME, contentValues, "$SR_NO=$srNo", null)
+        if(Id>0){
+            Toast.makeText(context, "$Id record Updated Successfully", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // TODO: for deleting the single record 
+    fun deleteSingleRecord(srNo: Int){
+        val Id : Int= sqLiteDatabase.delete(TABLE_NAME, "$SR_NO = $srNo", null)
+        if(Id>0){
+            Toast.makeText(context, "$Id record Deleted Successfully", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // TODO: for deleting all record at once 
+    fun deleteAllRecord(){
+        val Id : Int= sqLiteDatabase.delete(TABLE_NAME, null, null)
+        if(Id>0){
+            Toast.makeText(context, "$Id record Deleted Successfully", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     inner class MyDB(context: Context):SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION ){
         override fun onCreate(sqlDB: SQLiteDatabase?) {
             //sqlDB!!.execSQL(CREATE_TABLE)
