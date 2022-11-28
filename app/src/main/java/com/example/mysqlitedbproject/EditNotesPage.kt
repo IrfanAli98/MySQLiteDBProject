@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.mysqlitedbproject.databinding.ActivityEditNotesPageBinding
@@ -33,8 +34,7 @@ class EditNotesPage : AppCompatActivity() {
 //            if (dataBinding.etEdTitle.text.toString().isNotEmpty() && dataBinding.etEdDescrip.text.toString().isNotEmpty()){
                 viewModel.updateRecord(
                     dataBinding.etEdTitle.text.toString(), dataBinding.etEdDescrip.text.toString(),
-                    dataBinding.dcTime.text.toString(), notes.id
-                )
+                    dataBinding.dcTime.text.toString(), notes.id)
                 finish()
 //            }else{
 //                viewModel.deleteRecord(notes.id)
@@ -51,8 +51,9 @@ class EditNotesPage : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.ed_edit -> {
-                // TODO: need to make edittext text editable onlywhen the Edit button is clicked 
-
+                dataBinding.etEdTitle.isFocusableInTouchMode = true
+                dataBinding.etEdDescrip.isFocusableInTouchMode = true
+                dataBinding.btnUpdate.visibility =View.VISIBLE
             }
             R.id.ed_delete -> {
                 viewModel.deleteRecord(notes.id)

@@ -23,7 +23,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="10dp"
-
+            android:focusable="false"
             />
         <EditText
             android:layout_width="match_parent"
@@ -35,7 +35,8 @@
             app:layout_constraintTop_toBottomOf="@id/et_ed_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="10dp"/>
+            android:layout_margin="10dp"
+            android:focusable="false"/>
 
         <DigitalClock
             android:layout_width="wrap_content"
@@ -52,6 +53,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/btn_update"
             android:text="Update"
+            android:visibility="invisible"
             app:layout_constraintTop_toBottomOf="@id/dc_time"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

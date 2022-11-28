@@ -95,7 +95,6 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra(Keys.NOTES, Gson().toJson(notes))
                 startActivity(intent)
             }
-
         })
         dataBinding.rcwView.adapter=adapter
     }
