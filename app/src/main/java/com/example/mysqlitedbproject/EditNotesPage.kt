@@ -9,6 +9,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.mysqlitedbproject.databinding.ActivityEditNotesPageBinding
 import com.google.gson.Gson
+import java.text.SimpleDateFormat
+import java.util.*
 
 class EditNotesPage : AppCompatActivity() {
     private lateinit var dataBinding: ActivityEditNotesPageBinding
@@ -16,11 +18,17 @@ class EditNotesPage : AppCompatActivity() {
     private lateinit var viewModel: DBViewModel
     private lateinit var notes: NotesData
 
+    private lateinit var dateFormat: SimpleDateFormat
+    private lateinit var date:String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_edit_notes_page)
         factory = DBViewModelFactory(DBRepository(this))
         viewModel = ViewModelProvider(this, factory)[DBViewModel::class.java]
+
+        dateFormat = SimpleDateFormat("dd.MM.yyy")
+        date = dateFormat.format(Date())
 
 
         val intentData = intent.getStringExtra(Keys.NOTES)
@@ -33,8 +41,8 @@ class EditNotesPage : AppCompatActivity() {
 
 //            if (dataBinding.etEdTitle.text.toString().isNotEmpty() && dataBinding.etEdDescrip.text.toString().isNotEmpty()){
                 viewModel.updateRecord(
-                    dataBinding.etEdTitle.text.toString(), dataBinding.etEdDescrip.text.toString(),
-                    dataBinding.dcTime.text.toString(), notes.id)
+                    dataBinding.etEdTitle.text.toString(), dataBinding.etEdDescrip.text.toString(),"Modified_At $date"
+                            +" "+dataBinding.dcTime.text.toString(), notes.id)
                 finish()
 //            }else{
 //                viewModel.deleteRecord(notes.id)

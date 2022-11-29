@@ -14,22 +14,28 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mysqlitedbproject.`interface`.OnItemClickListener
 import com.example.mysqlitedbproject.databinding.ActivityMainBinding
 import com.google.gson.Gson
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var dataBinding: ActivityMainBinding
     private lateinit var factory: DBViewModelFactory
-    private lateinit var viewModel:DBViewModel
+    private lateinit var viewModel: DBViewModel
     private lateinit var adapter: MyRecyclerViewAdapter
+    private lateinit var dateFormat: SimpleDateFormat
+    private lateinit var date:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        dataBinding=DataBindingUtil.setContentView(this, R.layout.activity_main)
+        dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         factory = DBViewModelFactory(DBRepository(this))
-        viewModel= ViewModelProvider(this, factory)[DBViewModel::class.java]
+        viewModel = ViewModelProvider(this, factory)[DBViewModel::class.java]
+        dateFormat = SimpleDateFormat("dd.MM.yyy")
+        date = dateFormat.format(Date())
 
 
-        val layoutManager= LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         dataBinding.rcwView.layoutManager = layoutManager
         dataBinding.rcwView.setHasFixedSize(true)
 
@@ -37,30 +43,28 @@ class MainActivity : AppCompatActivity() {
 
         dataBinding.ftBtnAdd.setOnClickListener {
             val dialog = Dialog(this)
-            val manager= WindowManager.LayoutParams()
+            val manager = WindowManager.LayoutParams()
             manager.width = WindowManager.LayoutParams.MATCH_PARENT
             manager.height = WindowManager.LayoutParams.WRAP_CONTENT
 
             dialog.setContentView(R.layout.create_note_dialogue)
             dialog.setCancelable(false)
 
-            dialog.window!!.attributes=manager
+            dialog.window!!.attributes = manager
 
-            val btnClose= dialog.findViewById<ImageButton>(R.id.btn_close)
+            val btnClose = dialog.findViewById<ImageButton>(R.id.btn_close)
             val etTitle = dialog.findViewById<EditText>(R.id.et_title)
-            val etDescrip= dialog.findViewById<EditText>(R.id.et_Descrip)
-            val clkTime= dialog.findViewById<TextView>(R.id.clk_time)
-            val btnSave= dialog.findViewById<Button>(R.id.btn_save)
+            val etDescrip = dialog.findViewById<EditText>(R.id.et_Descrip)
+            val clkTime = dialog.findViewById<TextView>(R.id.clk_time)
+            val btnSave = dialog.findViewById<Button>(R.id.btn_save)
 
             btnSave.setOnClickListener {
-                if(etTitle.text.toString().isNotEmpty()&&etDescrip.text.toString().isNotEmpty()){
-                viewModel.saveRecord(etTitle.text.toString(), etDescrip.text.toString(), clkTime.text.toString())
+                if (etTitle.text.toString().isNotEmpty() && etDescrip.text.toString()
+                        .isNotEmpty()){
+                    viewModel.saveRecord(etTitle.text.toString(),etDescrip.text.toString(),"Created_AT $date" + " " + clkTime.text.toString())
                     updateUI()
                     dialog.dismiss()
-                }
-
-                else Toast.makeText(this, "Enter the Title and Description", Toast.LENGTH_SHORT).show()
-
+                } else Toast.makeText(this, "Enter the Title and Description", Toast.LENGTH_SHORT).show()
             }
             btnClose.setOnClickListener { dialog.dismiss() }
             dialog.show()
@@ -75,8 +79,8 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.it_delete->{
+        when (item.itemId) {
+            R.id.it_delete -> {
                 viewModel.deleteAllRecord()
                 updateUI()
             }
@@ -85,18 +89,19 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun getNotesList(): List<NotesData>{
+    fun getNotesList(): List<NotesData> {
         return viewModel.getNotesRecord()
     }
-    fun updateUI(){
-        adapter=MyRecyclerViewAdapter(getNotesList(), object : OnItemClickListener{
+
+    fun updateUI() {
+        adapter = MyRecyclerViewAdapter(getNotesList(), object : OnItemClickListener {
             override fun onItemClick(notes: NotesData, position: Int) {
                 val intent = Intent(this@MainActivity, EditNotesPage::class.java)
                 intent.putExtra(Keys.NOTES, Gson().toJson(notes))
                 startActivity(intent)
             }
         })
-        dataBinding.rcwView.adapter=adapter
+        dataBinding.rcwView.adapter = adapter
     }
 
     override fun onRestart() {
